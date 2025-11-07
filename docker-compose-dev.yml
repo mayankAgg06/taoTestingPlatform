@@ -1,0 +1,58 @@
+version: "3"
+services:
+  database:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: r00t
+      MYSQL_USER: tao
+      MYSQL_PASSWORD: tao
+      MYSQL_DATABASE: tao
+    volumes:
+      - example_mysql_data:/var/lib/mysql
+    cap_add:
+      - SYS_NICE
+    restart: unless-stopped
+    platform: linux/amd64
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tao:
+    image: devsu/tao:latest
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - example_tao_code:/var/www/html
+    environment:
+      DB_HOST: database
+      DB_NAME: tao
+      DB_USER: tao
+      DB_PASSWORD: tao
+    restart: unless-stopped
+    platform: linux/amd64
+
+  web:
+    image: nginx:1.19
+    depends_on:
+      - tao
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - example_tao_code:/var/www/html
+    restart: unless-stopped
+    platform: linux/amd64
+
+volumes:
+  example_mysql_data:
+  example_tao_code:
+
+
+
+
+
