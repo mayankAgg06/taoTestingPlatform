@@ -49,3 +49,15 @@ docker-compose -f example/docker-compose-dev.yml down -v
 docker-compose -f example/docker-compose-dev.yml up -d --build
 
 text
+
+## AWS Deployment
+
+For deploying to AWS EC2, see the detailed guide: [AWS_DEPLOYMENT.md](AWS_DEPLOYMENT.md)
+
+Quick AWS deployment:
+1. Launch Ubuntu 22.04 t3.medium EC2 instance
+2. Install Docker and Docker Compose
+3. Clone this repository
+4. Run `docker-compose -f example/docker-compose-dev.yml up -d --build`
+
+Full instructions with SSL/HTTPS setup available in the deployment guide.
