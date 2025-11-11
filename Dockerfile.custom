@@ -1,0 +1,13 @@
+# Use pre-built TAO image as base
+FROM devsu/tao:3.4-rc01
+
+# Copy Sharda University logo
+COPY logo_white.png /var/www/html/tao/views/img/tao-logo.png
+COPY logo_white.png /var/www/html/tao/views/img/logo_tao.png
+COPY logo_white.png /var/www/html/tao/views/img/tao_logo_big.png
+COPY logo_white.png /var/www/html/tao/views/img/tao-logo-alpha.png
+COPY logo_white.png /var/www/html/tao/views/img/tao-logo-beta.png
+
+# Set proper permissions for logo files
+RUN chmod 755 /var/www/html/tao/views/img/ && \
+    chmod 644 /var/www/html/tao/views/img/*.png
