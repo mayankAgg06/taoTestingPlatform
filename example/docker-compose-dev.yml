@@ -13,7 +13,7 @@ services:
       DB_USER: root
       DB_PASSWORD: r00t
       USER: admin
-      PASSWORD: admin123
+      PASSWORD: adminofinformatics@231
 
   web:
     image: nginx:1.19
