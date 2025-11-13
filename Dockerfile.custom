@@ -7,6 +7,9 @@ RUN apk add --no-cache tzdata && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone
 
+# Configure PHP timezone
+RUN echo "date.timezone = Asia/Kolkata" >> /usr/local/etc/php/conf.d/timezone.ini
+
 # Copy Sharda University logo
 COPY logo_white.png /var/www/html/tao/views/img/tao-logo.png
 COPY logo_white.png /var/www/html/tao/views/img/logo_tao.png
@@ -14,6 +17,24 @@ COPY logo_white.png /var/www/html/tao/views/img/tao_logo_big.png
 COPY logo_white.png /var/www/html/tao/views/img/tao-logo-alpha.png
 COPY logo_white.png /var/www/html/tao/views/img/tao-logo-beta.png
 
-# Set proper permissions for logo files
+# Copy Sharda Informatics favicon
+COPY favicon.ico /var/www/html/tao/views/img/favicon.ico
+COPY favicon.ico /var/www/html/favicon.ico
+
+# Copy title update script
+COPY update-title.sh /usr/local/bin/update-title.sh
+
+# Set proper permissions
 RUN chmod 755 /var/www/html/tao/views/img/ && \
-    chmod 644 /var/www/html/tao/views/img/*.png
+    chmod 644 /var/www/html/tao/views/img/*.png && \
+    chmod 644 /var/www/html/tao/views/img/favicon.ico && \
+    chmod 644 /var/www/html/favicon.ico && \
+    chmod +x /usr/local/bin/update-title.sh
+    
+# Set up PHP error logging
+RUN mkdir -p /var/log && chown www-data:www-data /var/log
+RUN touch /var/log/php_errors.log && chown www-data:www-data /var/log/php_errors.log
+
+RUN echo "log_errors=On" > /usr/local/etc/php/conf.d/docker-php-errors.ini \
+  && echo "error_log=/var/log/php_errors.log" >> /usr/local/etc/php/conf.d/docker-php-errors.ini \
+  && echo "display_errors=On" >> /usr/local/etc/php/conf.d/docker-php-errors.ini

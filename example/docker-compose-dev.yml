@@ -1,3 +1,4 @@
+version: "3"
 services:
   tao:
     build:
@@ -5,8 +6,10 @@ services:
       dockerfile: Dockerfile.custom
     depends_on:
       - database
-    volumes:
-      - tao-code:/var/www/html
+    # Removed volume mount to let image's internal files be used
+    # If you want to persist source code, replace with a bind mount to existed local folder
+    # volumes:
+    #   - ./tao-source:/var/www/html
     environment:
       DB_HOST: ${DB_HOST:-database}
       DB_NAME: ${DB_NAME:-tao}
@@ -16,6 +19,8 @@ services:
       PASSWORD: ${ADMIN_PASSWORD:-admin123}
       URL: ${TAO_URL:-http://localhost}
       TZ: Asia/Kolkata
+    ports:
+      - "9000:9000"  # Expose PHP-FPM port if necessary
 
   web:
     image: nginx:1.19
@@ -25,9 +30,10 @@ services:
       - tao
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - tao-code:/var/www/html
-    environment:
-      TZ: Asia/Kolkata
+      # To serve static files, share the internal image html files from the tao container
+      # volumes:
+      #   - ./tao-source:/var/www/html
+      - tao-code:/var/www/html  
 
   database:
     image: mysql:8.0
